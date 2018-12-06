@@ -7,6 +7,8 @@ $(document).ready(function(){
 	const Url1='https://192.168.17.97/rest/login"
 	const Url2='https://192.168.17.97/rest/config/host/1"
 	$.ajax({ url: Url1,
+		headers: {"Content-Encoding": "application/json"}
+		data: {"username": "admin", "password": "initial"}
 		context: document.body
 		success: function(){
 			alert("done");
