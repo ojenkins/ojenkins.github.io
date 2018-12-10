@@ -2,34 +2,46 @@
 <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
 <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.0/aframe/build/aframe-ar.js"></script>
 <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/cfe5f316/dist/aframe-extras.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
 $(document).ready(function(){
-	alert("ready");
-	const Url1="https://192.168.17.97/rest/login"
-	const Url2="https://192.168.17.97/rest/config/host/1"
-	$.ajax({ url: Url1,
-		headers: {"Content-Encoding": "application/json"},
+	const Url1="http://192.168.17.97/rest/login"
+	const Url2="http://192.168.17.97/rest/config/host/1"
+	$.ajax({ 
+		url: Url1,
 		data: {"username": "admin", "password": "initial"},
-		type: "POST",
-		context: document.body,
-		success: function(){
-			alert("done");
-		}
+		crossDomain: true,
+		type: 'post',
+		success: function(responseData){
+			//alert(responseData.token);
+			$.ajax({
+				url: Url2,
+				headers: {
+					'X-Opsview-Username': 'admin', 
+					'X-Opsview-Token': responseData.token,
+					'Accept': '*/*',
+					'Content-Type': 'text/plain'
+				},
+				crossDomain: true,
+				success: function(responseData){
+					alert(responseData);
+				}
+			});
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+     	console.log("some error: " + textStatus + ", " + errorThrown);
+  	}
 	});
 });
 </script>
 <body style='margin : 0px; overflow: hidden;'>
-   
 	<a-scene embedded arjs='sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
-<a-assets>
-  <img id="picture" src="change.jpg">
-</a-assets>
 		<a-box position='0 0.5 0' material='opacity: 0.5;'></a-box>
       <a-marker type='barcode' value='0'>
         <a-box position='0 0.5 0' material='color: yellow;'></a-box>
     </a-marker>
-      <a-marker type='barcode' value='1'>     
-<a-plane src="#picture" width="3" height="3" rotation="-90 0 0"></a-plane>
+      <a-marker type='barcode' value='1'>
+        <a-sphere position='0 0.5 0' material='color: red;'></a-sphere>
 	</a-marker>
 		<a-marker-camera preset='hiro'></a-marker-camera>
 	</a-scene>
